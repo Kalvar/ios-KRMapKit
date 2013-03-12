@@ -20,7 +20,16 @@
 		8EA5398F16554C29001F8A9F /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EA5398D16554C29001F8A9F /* ViewController.xib */; };
 		8EA5399616554C69001F8A9F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EA5399516554C69001F8A9F /* MapKit.framework */; };
 		8EA5399816554D27001F8A9F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EA5399716554D27001F8A9F /* CoreLocation.framework */; };
-		8EA5399B16554FCF001F8A9F /* KRAnnotationProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA5399A16554FCF001F8A9F /* KRAnnotationProtocol.m */; };
+		8EF7643F16EF71DF0006DBFE /* KRAnnotationProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF7643A16EF71DF0006DBFE /* KRAnnotationProtocol.m */; };
+		8EF7644016EF71DF0006DBFE /* KRAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF7643C16EF71DF0006DBFE /* KRAnnotationView.m */; };
+		8EF7644116EF71DF0006DBFE /* KRMapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF7643E16EF71DF0006DBFE /* KRMapKit.m */; };
+		8EF7644316EF72400006DBFE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF7644216EF72400006DBFE /* QuartzCore.framework */; };
+		8EF7644916EF7F0D0006DBFE /* left_sample.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7644516EF7F0D0006DBFE /* left_sample.png */; };
+		8EF7644A16EF7F0D0006DBFE /* left_sample@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7644616EF7F0D0006DBFE /* left_sample@2x.png */; };
+		8EF7644B16EF7F0D0006DBFE /* pin_sample.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7644716EF7F0D0006DBFE /* pin_sample.png */; };
+		8EF7644C16EF7F0D0006DBFE /* pin_sample@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7644816EF7F0D0006DBFE /* pin_sample@2x.png */; };
+		8EF7644F16EF851E0006DBFE /* ele_author_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7644D16EF851E0006DBFE /* ele_author_small.png */; };
+		8EF7645016EF851E0006DBFE /* ele_author_small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7644E16EF851E0006DBFE /* ele_author_small@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,8 +51,19 @@
 		8EA5398E16554C29001F8A9F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController.xib; sourceTree = "<group>"; };
 		8EA5399516554C69001F8A9F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		8EA5399716554D27001F8A9F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		8EA5399916554FCF001F8A9F /* KRAnnotationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRAnnotationProtocol.h; sourceTree = "<group>"; };
-		8EA5399A16554FCF001F8A9F /* KRAnnotationProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRAnnotationProtocol.m; sourceTree = "<group>"; };
+		8EF7643916EF71DF0006DBFE /* KRAnnotationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRAnnotationProtocol.h; sourceTree = "<group>"; };
+		8EF7643A16EF71DF0006DBFE /* KRAnnotationProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRAnnotationProtocol.m; sourceTree = "<group>"; };
+		8EF7643B16EF71DF0006DBFE /* KRAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRAnnotationView.h; sourceTree = "<group>"; };
+		8EF7643C16EF71DF0006DBFE /* KRAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRAnnotationView.m; sourceTree = "<group>"; };
+		8EF7643D16EF71DF0006DBFE /* KRMapKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRMapKit.h; sourceTree = "<group>"; };
+		8EF7643E16EF71DF0006DBFE /* KRMapKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRMapKit.m; sourceTree = "<group>"; };
+		8EF7644216EF72400006DBFE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8EF7644516EF7F0D0006DBFE /* left_sample.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left_sample.png; sourceTree = "<group>"; };
+		8EF7644616EF7F0D0006DBFE /* left_sample@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "left_sample@2x.png"; sourceTree = "<group>"; };
+		8EF7644716EF7F0D0006DBFE /* pin_sample.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pin_sample.png; sourceTree = "<group>"; };
+		8EF7644816EF7F0D0006DBFE /* pin_sample@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pin_sample@2x.png"; sourceTree = "<group>"; };
+		8EF7644D16EF851E0006DBFE /* ele_author_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ele_author_small.png; sourceTree = "<group>"; };
+		8EF7644E16EF851E0006DBFE /* ele_author_small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ele_author_small@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EF7644316EF72400006DBFE /* QuartzCore.framework in Frameworks */,
 				8EA5399816554D27001F8A9F /* CoreLocation.framework in Frameworks */,
 				8EA5399616554C69001F8A9F /* MapKit.framework in Frameworks */,
 				8EA5397316554C28001F8A9F /* UIKit.framework in Frameworks */,
@@ -65,8 +86,11 @@
 		8EA5396616554C28001F8A9F = {
 			isa = PBXGroup;
 			children = (
+				8EF7644216EF72400006DBFE /* QuartzCore.framework */,
 				8EA5399716554D27001F8A9F /* CoreLocation.framework */,
 				8EA5399516554C69001F8A9F /* MapKit.framework */,
+				8EF7644416EF7F0D0006DBFE /* Images */,
+				8EF7643816EF71DF0006DBFE /* Classes */,
 				8EA5397816554C28001F8A9F /* KRMapKit */,
 				8EA5397916554C28001F8A9F /* Supporting Files */,
 				8EA5397116554C28001F8A9F /* Frameworks */,
@@ -100,8 +124,6 @@
 				8EA5398A16554C28001F8A9F /* ViewController.h */,
 				8EA5398B16554C29001F8A9F /* ViewController.m */,
 				8EA5398D16554C29001F8A9F /* ViewController.xib */,
-				8EA5399916554FCF001F8A9F /* KRAnnotationProtocol.h */,
-				8EA5399A16554FCF001F8A9F /* KRAnnotationProtocol.m */,
 			);
 			path = KRMapKit;
 			sourceTree = "<group>";
@@ -119,6 +141,34 @@
 			);
 			name = "Supporting Files";
 			path = KRMapKit;
+			sourceTree = "<group>";
+		};
+		8EF7643816EF71DF0006DBFE /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				8EF7643916EF71DF0006DBFE /* KRAnnotationProtocol.h */,
+				8EF7643A16EF71DF0006DBFE /* KRAnnotationProtocol.m */,
+				8EF7643B16EF71DF0006DBFE /* KRAnnotationView.h */,
+				8EF7643C16EF71DF0006DBFE /* KRAnnotationView.m */,
+				8EF7643D16EF71DF0006DBFE /* KRMapKit.h */,
+				8EF7643E16EF71DF0006DBFE /* KRMapKit.m */,
+			);
+			name = Classes;
+			path = KRMapKit/Classes;
+			sourceTree = "<group>";
+		};
+		8EF7644416EF7F0D0006DBFE /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				8EF7644D16EF851E0006DBFE /* ele_author_small.png */,
+				8EF7644E16EF851E0006DBFE /* ele_author_small@2x.png */,
+				8EF7644516EF7F0D0006DBFE /* left_sample.png */,
+				8EF7644616EF7F0D0006DBFE /* left_sample@2x.png */,
+				8EF7644716EF7F0D0006DBFE /* pin_sample.png */,
+				8EF7644816EF7F0D0006DBFE /* pin_sample@2x.png */,
+			);
+			name = Images;
+			path = KRMapKit/Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,6 +227,12 @@
 				8EA5398716554C28001F8A9F /* Default@2x.png in Resources */,
 				8EA5398916554C28001F8A9F /* Default-568h@2x.png in Resources */,
 				8EA5398F16554C29001F8A9F /* ViewController.xib in Resources */,
+				8EF7644916EF7F0D0006DBFE /* left_sample.png in Resources */,
+				8EF7644A16EF7F0D0006DBFE /* left_sample@2x.png in Resources */,
+				8EF7644B16EF7F0D0006DBFE /* pin_sample.png in Resources */,
+				8EF7644C16EF7F0D0006DBFE /* pin_sample@2x.png in Resources */,
+				8EF7644F16EF851E0006DBFE /* ele_author_small.png in Resources */,
+				8EF7645016EF851E0006DBFE /* ele_author_small@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,7 +246,9 @@
 				8EA5397F16554C28001F8A9F /* main.m in Sources */,
 				8EA5398316554C28001F8A9F /* AppDelegate.m in Sources */,
 				8EA5398C16554C29001F8A9F /* ViewController.m in Sources */,
-				8EA5399B16554FCF001F8A9F /* KRAnnotationProtocol.m in Sources */,
+				8EF7643F16EF71DF0006DBFE /* KRAnnotationProtocol.m in Sources */,
+				8EF7644016EF71DF0006DBFE /* KRAnnotationView.m in Sources */,
+				8EF7644116EF71DF0006DBFE /* KRMapKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

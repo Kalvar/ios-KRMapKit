@@ -11,6 +11,15 @@
 #import "ViewController.h"
 #import <MapKit/MKMapItem.h>
 #import "KRAnnotationProtocol.h"
+#import "KRAnnotationView.h"
+
+static NSString *_kPinIdentifier = @"_mapViewPins";
+
+@interface ViewController()
+
+@property (nonatomic, assign) BOOL _isCancelledCurrentLocationCallout;
+
+@end
 
 @interface ViewController(fixPrivate)
 
@@ -20,6 +29,54 @@
 
 @implementation ViewController(fixPrivate)
 
+/*
+ * @ 動態取得經緯度和增加大頭針
+ */
+-(void)_tapPress:(UIGestureRecognizer*)gestureRecognizer
+{
+    /*
+     * @ 如果是長按的事件
+     *   - 在一開始按下去時會先觸發 UIGestureRecognizerStateBegan，而不會觸發 UIGestureRecognizerStateChanged 的狀態。
+     *
+     * @ 如果是單擊的事件
+     *   - 僅會觸發的是 UIGestureRecognizerStateEnded 狀態。
+     */
+    //是初次觸發手勢的狀態 OR 改變手勢的狀態
+    if ([gestureRecognizer state] == UIGestureRecognizerStateBegan || [gestureRecognizer state] == UIGestureRecognizerStateChanged) {
+        /*
+         * @ touchPoint 是點擊的某點在地图中的位置
+         */
+        CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
+        /*
+         * @ 取得經緯度
+         *   - 使用 coverPoint 方法將畫面座標點轉換成經緯度
+         *   -
+         */
+        //取得該點的經緯度
+        CLLocationCoordinate2D touchMapCoordinate = [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
+        //動態加入大頭針
+        [self addAnnotationForMapView:self.mapView
+                             latitude:touchMapCoordinate.latitude
+                            longitude:touchMapCoordinate.longitude
+                                title:@"點擊增加地點"
+                             subtitle:@"哈哈"];
+    }
+    
+}
+
+-(void)_addGestureRecognizer{
+    /*
+     * @ 加入點擊手勢
+     *   - 動態增加大頭針和取得該點的經緯度。
+     *   - 單擊是點一下就會作動，那會跟「點二下放大」的動作相衝突。
+     *   - 解法 1. 「長按」後再啟動手勢，並不是最好的方法，長按後拖動，會連續動啟長按手勢的觸發函式，造成無限增加大頭針的問題。
+     *   - 解法 2. 最好的方法是「設一個關閉按鈕」，點下去，就「啟動單擊手勢」增加大頭針，再點下去，就「移除單擊手勢」。
+     */
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_tapPress:)];
+    //觸發時間
+    longPressRecognizer.minimumPressDuration = 0.5f;
+    [self.mapView addGestureRecognizer:longPressRecognizer];
+}
 
 
 @end
@@ -31,7 +88,13 @@
 @synthesize latitudeLabel;
 @synthesize longitudeLabel;
 
--(void) viewDidLoad{
+-(void) viewDidLoad
+{
+    [super viewDidLoad];
+    
+    //增加額外的手勢操作
+    [self _addGestureRecognizer];
+    
     //設定 MapView 的委派
     mapView.delegate          = self;
     //允許縮放地圖
@@ -73,27 +136,25 @@
     //設定區域至 MapView 裡
     mapView.region = centerRegion;
     //設定標記
-    [self addAnnotationsForMapView:mapView
-                       andLatitude:24.136845
-                      andLongitude:120.685009
-                          andTitle:@"台中火車站"
-                      withSubtitle:@"火車頭"];
+    [self addAnnotationForMapView:mapView
+                         latitude:24.136845
+                        longitude:120.685009
+                            title:@"台中火車站"
+                         subtitle:@"火車頭"];
+    //
+    [self addAnnotationForMapView:mapView
+                         latitude:24.155006
+                        longitude:120.662956
+                            title:@"台中 SOGO"
+                         subtitle:@"旁邊有老虎城"];
     
-    //設定標記
-    [self addAnnotationsForMapView:mapView
-                       andLatitude:24.155006
-                      andLongitude:120.662956
-                          andTitle:@"台中 SOGO"
-                      withSubtitle:@"旁邊有老虎城"];
-    
-    [super viewDidLoad];
 }
 
 #pragma IBActions
 /*
  * 外開官方 Apple Maps App 進行路徑規劃。
  */
-//目前位置導航
+//目前位置導航至指定位置
 -(IBAction)currentDirection:(id)sender{
     /*
      * 到台中火車站
@@ -179,37 +240,40 @@
 }
 
 //新增地圖標記
--(void)addAnnotationsForMapView:(MKMapView *)theMapView
-                    andLatitude:(float)latitude
-                   andLongitude:(float)longitude
-                       andTitle:(NSString *)title
-                   withSubtitle:(NSString *)subtitle{
-    
+-(void)addAnnotationForMapView:(MKMapView *)_theMapView
+                      latitude:(float)_latitude
+                     longitude:(float)_longitude
+                         title:(NSString *)_theTitle
+                      subtitle:(NSString *)_subtitle
+{
     //宣告 GPS 定位的 2D 地圖物件
-    CLLocationCoordinate2D mapCenter;
-    //宣告自訂義的 Annotation (標記)物件
-    KRAnnotationProtocol *krAnno = [[KRAnnotationProtocol alloc] init];
-    //設定緯度
-    mapCenter.latitude  = latitude;
-    //設定經度
-    mapCenter.longitude = longitude;
     //設定標記物件裡的 GPS 定位地圖物件
-    krAnno.coordinate = mapCenter;
-    //設定標記的標題
-    krAnno.title = title;
-    //設定標記的內容
-    krAnno.subtitle = subtitle;
+    CLLocationCoordinate2D mapCenter;
+    //設定緯度
+    mapCenter.latitude  = _latitude;
+    //設定經度
+    mapCenter.longitude = _longitude;
+    //宣告自訂義的 Annotation (標記)物件
+    KRAnnotationProtocol *krAnno = [[KRAnnotationProtocol alloc] initWithCoordinate:mapCenter
+                                                                        customTitle:_theTitle
+                                                                     customSubtitle:_subtitle];
+    //設定圖片
+    krAnno.leftImage      = [UIImage imageNamed:@"ele_author_small.png"];
     //將標記加入地圖裡
-    [theMapView addAnnotation:krAnno];
+    [_theMapView addAnnotation:krAnno];
 }
 
 #pragma MKMapViewDelegate
-//要開始定位使用者位置
+/*
+ * @ 要開始定位使用者位置
+ */
 -(void)mapViewWillStartLocatingUser:(MKMapView *)mapView{
-    
+    //NSLog(@"1");
 }
 
-//開始載入地圖時，顥示等待的動畫
+/*
+ * @ 開始載入地圖時，顥示等待的動畫
+ */
 -(void)mapViewWillStartLoadingMap:(MKMapView *)mapView{
     if( busy == nil ){
         busy = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -218,15 +282,22 @@
     }
     busy.hidesWhenStopped = YES;
     [busy startAnimating];
+    //NSLog(@"2");
 }
 
-//完全載入地圖後，停止動畫
+/*
+ * @ 完全載入地圖後，停止動畫
+ */
 -(void)mapViewDidFinishLoadingMap:(MKMapView *)mapView{
     [busy stopAnimating];
+    //NSLog(@"3");
 }
 
-//使用者位置更新後，讓現在位置置中
+/*
+ * @ 使用者位置更新後，讓現在位置置中
+ */
 -(void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation{
+    //NSLog(@"4");
     if( !setup ){
         setup = YES;
         //更新顥示的視野
@@ -237,37 +308,115 @@
     }
 }
 
-//使用地圖標記功能 : Annotation 註解/註釋/銓釋
--(MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id<MKAnnotation>)annotation{
-    //如果是現在的位置，就不要使用標記功能
-    if( [[annotation title] isEqualToString:@"Current Location"] ){
+/*
+ * @ 使用地圖標記 Pin ( Annotation )
+ *   - 動態加入大頭針
+ *   - 反解譯取得經緯度
+ */
+-(MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    /*
+     * @ 如果是現在的位置，就不要使用標記功能
+     */
+    if( [annotation isKindOfClass:[MKUserLocation class]] )
+    {
         return nil;
     }
-    
-    static NSString *pinIdentifier = @"currentPin";
-    
-    //讓 Pin (標記元件) 是可以被重覆使用的
-    MKPinAnnotationView *pin = (MKPinAnnotationView *)[theMapView dequeueReusableAnnotationViewWithIdentifier:pinIdentifier];
-    //如果 Pin 不存在
-    if( pin == nil ){
-        //初始化
-        pin = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:pinIdentifier];
+    //
+    KRAnnotationProtocol *_krAnnotation = (KRAnnotationProtocol *)annotation;
+    NSString *_reusePinId = _kPinIdentifier;
+    /*
+     * @ Pin (標記元件) 是可以被重覆使用且客製化的
+     *   - 這裡先試著取出「已經被定義且使用者 MapView 上的 Pin」，之後就重複使用該 Pin。
+     *   - 原理跟 TableViewCell 的作動一樣。
+     *
+     * @ 原始為 MKPinAnnotationView ( 直接一個大頭針 View )
+     *   而 MKAnnotationView 則是一個「點」的大頭針，兩者不同。
+     *
+     */
+    KRAnnotationView *_krAnnotationView = (KRAnnotationView *)[theMapView dequeueReusableAnnotationViewWithIdentifier:_reusePinId];
+    if( _krAnnotationView == nil )
+    {
+        _krAnnotationView = [[KRAnnotationView alloc] initWithAnnotation:_krAnnotation reuseIdentifier:_reusePinId];
     }
-    
     //設定標記顏色
-    pin.pinColor = MKPinAnnotationColorPurple;
+    //pin.pinColor = MKPinAnnotationColorPurple;
     //標記拖拉動畫
-    pin.animatesDrop = YES;
-    //標記呼喚
-    pin.canShowCallout = YES;
-    
+    //pin.animatesDrop = YES;
+    //Callout 彈出註釋呼喚 ( Default is NO )
+    _krAnnotationView.canShowCallout = YES;
+    //可以拖拉
+    //_krAnnotationView.draggable = YES;
     //點選標記時，說明的小圖示右方是一個單箭頭按鈕 : Accessory 附加物件
-    pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-    //pin.rightCalloutAccessoryView = UIButtonTypeCustom;
-    
-    return pin;
+    _krAnnotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    //pin.leftCalloutAccessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"大頭針左側小圖.png"]];
+    return _krAnnotationView;
 }
 
+/*
+ * @ 當 Pin ( 大頭針 ) 的右側箭頭被按下時
+ */
+-(void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
+{
+    if( [view.annotation isKindOfClass:[KRAnnotationProtocol class]] )
+    {
+        KRAnnotationProtocol *_krAnnotation = (KRAnnotationProtocol *)view.annotation;
+        NSString *_idIndex = _krAnnotation.idIndex;
+        if( _idIndex )
+        {
+            //... 看該 ID 底下的內容 Detail
+        }
+    }
+}
+
+/*
+ * @ 當選擇 Pin 時
+ *   - 此時才執行客製化 Pin 內容的動作
+ */
+-(void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+    if( [view isKindOfClass:[KRAnnotationView class]] )
+    {
+        KRAnnotationView *_krAnnotationView   = (KRAnnotationView *)view;
+        KRAnnotationProtocol *_krAnnotation   = (KRAnnotationProtocol *)_krAnnotationView.annotation;
+        //UIView *_v = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 200.0f, 38.0f)];
+        //[_v setBackgroundColor:[UIColor redColor]];
+        //_krAnnotationView.customContentView   = _v;
+        _krAnnotationView.leftImageView = [[UIImageView alloc] initWithImage:_krAnnotation.leftImage];
+        [_krAnnotationView makeCustomContent];
+    }
+}
+
+/*
+ * @ 當離開 Pin 時
+ *   - 此時要移除客製化 Pin 內容的動作
+ */
+-(void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
+{
+    //...
+}
+
+/*
+ * @ 每一次新增加完一個或一整批的大頭針後，就會觸發這裡
+ *   - 要在這裡取消「Current Location」的彈出註釋視窗( Cancels Callout )
+ */
+-(void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views
+{
+    if( !self._isCancelledCurrentLocationCallout )
+    {
+        //NSLog(@"didAddAnnotationViews");
+        for(MKAnnotationView *_subview in views)
+        {
+            if([_subview.annotation isKindOfClass:[MKUserLocation class]])
+            {
+                MKAnnotationView *_userLocationAnnotationView = _subview;
+                _userLocationAnnotationView.canShowCallout = NO;
+                break;
+            }
+        }
+        self._isCancelledCurrentLocationCallout = YES;
+    }
+}
 
 
 

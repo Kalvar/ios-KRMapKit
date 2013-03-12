@@ -37,11 +37,11 @@
 //更新區域位置
 -(void)updateReginForLocation:(CLLocation *)newLocation keepSpan:(BOOL)keepSpan;
 //新增地圖標記
--(void)addAnnotationsForMapView:(MKMapView *)theMapView
-                    andLatitude:(float)latitude
-                   andLongitude:(float)longitude
-                       andTitle:(NSString *)title
-                   withSubtitle:(NSString *)subtitle;
+-(void)addAnnotationForMapView:(MKMapView *)_theMapView
+                      latitude:(float)_latitude
+                     longitude:(float)_longitude
+                         title:(NSString *)_theTitle
+                      subtitle:(NSString *)_subtitle;
 
 
 @end
