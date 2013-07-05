@@ -1,7 +1,8 @@
 ## Screen Shot
 
 <img src="https://dl.dropbox.com/u/83663874/GitHubs/KRMapKit-1.png" alt="KRMapKit" title="KRMapKit" style="margin: 20px;" class="center" /> &nbsp;
-<img src="https://dl.dropbox.com/u/83663874/GitHubs/KRMapKit-2.png" alt="KRMapKit" title="KRMapKit" style="margin: 20px;" class="center" />
+<img src="https://dl.dropbox.com/u/83663874/GitHubs/KRMapKit-2.png" alt="KRMapKit" title="KRMapKit" style="margin: 20px;" class="center" /> &nbsp;
+<img src="https://dl.dropbox.com/u/83663874/GitHubs/KRMapKit-3.png" alt="KRMapKit" title="KRMapKit" style="margin: 20px;" class="center" />
 
 ## Supports
 
