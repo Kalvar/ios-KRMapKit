@@ -42,7 +42,7 @@
     _imageViewLayer.shadowOffset  = CGSizeMake(0, 0);
     _imageViewLayer.shadowOpacity = 0.5;
     _imageViewLayer.shadowRadius  = 5.0;
-    
+    _imageViewLayer.opaque        = NO;
 }
 
 /*

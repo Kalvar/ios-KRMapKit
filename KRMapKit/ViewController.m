@@ -12,6 +12,7 @@
 #import <MapKit/MKMapItem.h>
 #import "KRAnnotationProtocol.h"
 #import "KRAnnotationView.h"
+#import "KRMapKit.h"
 
 static NSString *_kPinIdentifier = @"_mapViewPins";
 
@@ -78,6 +79,30 @@ static NSString *_kPinIdentifier = @"_mapViewPins";
     [self.mapView addGestureRecognizer:longPressRecognizer];
 }
 
+-(void)_useCurrentLocationConvertToAddress
+{
+    [[KRMapKit sharedManager] startLocationToConvertAddress:^(NSDictionary *addresses, NSError *error) {
+        NSLog(@"Your Address : %@", addresses);
+    }];
+}
+
+-(void)_useAddressConvertToLocation:(NSString *)_address
+{
+    [[KRMapKit sharedManager] reverseLocationFromAddress:_address completionHandler:^(CLLocationCoordinate2D location) {
+        NSLog(@"Address Location : %f, %f", location.latitude, location.longitude);
+    }];
+}
+
+-(void)doYourselfToStartLocationAndGetCoordinates
+{
+    KRMapKit *_krMapKit = [[KRMapKit alloc] init];
+    [_krMapKit startLocation];
+    NSString *currentLatitude  = [_krMapKit currentLatitude];
+    NSString *currentLongitude = [_krMapKit currentLongitude];
+    [_krMapKit stopLocation];
+    _krMapKit = nil;
+    NSLog(@"current Latitude : %@, Longitude : %@", currentLatitude, currentLongitude);
+}
 
 @end
 
@@ -88,10 +113,10 @@ static NSString *_kPinIdentifier = @"_mapViewPins";
 @synthesize latitudeLabel;
 @synthesize longitudeLabel;
 
--(void) viewDidLoad
+-(void)viewDidLoad
 {
     [super viewDidLoad];
-    
+        
     //增加額外的手勢操作
     [self _addGestureRecognizer];
     
@@ -148,6 +173,11 @@ static NSString *_kPinIdentifier = @"_mapViewPins";
                             title:@"台中 SOGO"
                          subtitle:@"旁邊有老虎城"];
     
+    //Parse Location to Address
+    [self _useCurrentLocationConvertToAddress];
+    //Parse Address to Location
+    //Noted, 臺中 never convert with Apple, 台中 is correct.
+    [self _useAddressConvertToLocation:@"台中市建國路172號"];
 }
 
 #pragma IBActions
@@ -155,7 +185,8 @@ static NSString *_kPinIdentifier = @"_mapViewPins";
  * 外開官方 Apple Maps App 進行路徑規劃。
  */
 //目前位置導航至指定位置
--(IBAction)currentDirection:(id)sender{
+-(IBAction)currentDirection:(id)sender
+{
     /*
      * 到台中火車站
      */
@@ -175,7 +206,8 @@ static NSString *_kPinIdentifier = @"_mapViewPins";
 }
 
 //任二點導航
--(IBAction)anywhereDirection:(id)sender{
+-(IBAction)anywhereDirection:(id)sender
+{
     /*
      * 當前位置
      */
@@ -224,7 +256,8 @@ static NSString *_kPinIdentifier = @"_mapViewPins";
 
 #pragma My Methods
 //更新顥示的視野
--(void)updateReginForLocation:(CLLocation *)newLocation keepSpan:(BOOL)keepSpan{
+-(void)updateReginForLocation:(CLLocation *)newLocation keepSpan:(BOOL)keepSpan
+{
     MKCoordinateRegion theRegion;
     theRegion.center = newLocation.coordinate;
     if( !keepSpan ){

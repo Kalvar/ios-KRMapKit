@@ -11,6 +11,8 @@
 #import <CoreLocation/CoreLocation.h>
 
 typedef void (^AddressConversionCompleted)(NSDictionary *addresses, NSError *error);
+typedef void (^LocationConversionCompleted)(CLLocationCoordinate2D location);
+
 
 @protocol KRMapKitDelegate;
 
@@ -60,13 +62,16 @@ typedef void (^AddressConversionCompleted)(NSDictionary *addresses, NSError *err
 @property (nonatomic, weak) NSString *subThoroughfare;
 @property (nonatomic, weak) NSString *countryCode;
 
-
++(KRMapKit *)sharedManager;
 -(id)initWithDelegate:(id<KRMapKitDelegate>)_krDelegate;
 /*
  * 開始 / 結束定位
  */
 -(void)startLocation;
 -(void)stopLocation;
+/*
+ * 將經緯度座標轉換成地址 ( Location convert to Address )
+ */
 -(void)startLocationToConvertAddress:(AddressConversionCompleted)_addressHandler;
 /*
  * 取得當前緯 / 經度
@@ -74,9 +79,10 @@ typedef void (^AddressConversionCompleted)(NSDictionary *addresses, NSError *err
 -(NSString *)currentLatitude;
 -(NSString *)currentLongitude;
 /*
- * 將地址轉換成經緯度座標
+ * 將地址轉換成經緯度座標 ( Address convert to Location )
  */
--(CLLocationCoordinate2D)reverseLocationFromAddress:(NSString *)_address;
+-(void)reverseLocationFromAddress:(NSString *)_address completionHandler:(LocationConversionCompleted)_locationHandler;
+
 
 @end
 

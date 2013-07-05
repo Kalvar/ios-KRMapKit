@@ -112,10 +112,22 @@
 @synthesize subThoroughfare;
 @synthesize countryCode;
 
++(KRMapKit *)sharedManager
+{
+    static dispatch_once_t pred;
+    static KRMapKit *_singleton = nil;
+    dispatch_once(&pred, ^{
+        _singleton = [[KRMapKit alloc] init];
+    });
+    return _singleton;
+    //return [[self alloc] init];
+}
 
--(id)initWithDelegate:(id<KRMapKitDelegate>)_krDelegate{
+-(id)initWithDelegate:(id<KRMapKitDelegate>)_krDelegate
+{
     self = [super init];
-    if( self ){
+    if( self )
+    {
         self.delegate   = _krDelegate;
         locationManager = [[CLLocationManager alloc] init];
         locationManager.delegate = self;
@@ -123,7 +135,8 @@
     return self;
 }
 
--(void)startLocation{
+-(void)startLocation
+{
     //先停止定位
     [self.locationManager stopUpdatingLocation];
     //再開始定位
@@ -134,11 +147,13 @@
     [self _locationCurrent:self.locationManager.location];
 }
 
--(void)stopLocation{
+-(void)stopLocation
+{
     [self.locationManager stopUpdatingLocation];
 }
 
--(void)startLocationToConvertAddress:(AddressConversionCompleted)_addressHandler{
+-(void)startLocationToConvertAddress:(AddressConversionCompleted)_addressHandler
+{
     [self startLocation];
     CLGeocoder *_gecoder = [[CLGeocoder alloc] init];
     [_gecoder reverseGeocodeLocation:self.locationManager.location
@@ -147,39 +162,42 @@
                    }];
 }
 
--(NSString *)currentLatitude{
+-(NSString *)currentLatitude
+{
     return [NSString stringWithFormat:@"%lf", self.locationManager.location.coordinate.latitude];
 }
 
--(NSString *)currentLongitude{
+-(NSString *)currentLongitude
+{
     return [NSString stringWithFormat:@"%lf", self.locationManager.location.coordinate.longitude];
 }
 
--(CLLocationCoordinate2D)reverseLocationFromAddress:(NSString *)_address
+-(void)reverseLocationFromAddress:(NSString *)_address completionHandler:(LocationConversionCompleted)_locationHandler
 {
-    /*
-     * @ 設定 URL 並執行 Escape 的動作
-     *   - 回傳 CSV 字串 ( 也能改成 JSON : output=json )
-     */
-    NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps/geo?q=%@&output=csv",
-                           [_address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    
-    //送出 URL 並同時解析回字串
-    NSString *locationString = [NSString stringWithContentsOfURL:[NSURL URLWithString:urlString]
-                                                        encoding:NSUTF8StringEncoding
-                                                           error:nil];
-    //切割字串
-    NSArray *responseArray = [locationString componentsSeparatedByString:@","];
-    //取出經緯度
-    CLLocationCoordinate2D gpsLocation;
-    //回應值 >= 4 組 && 回應的 HTTP Code 為 200 為正確
-    if( [responseArray count] >= 4 && [[responseArray objectAtIndex:0] isEqualToString:@"200"] ){
-        //緯度
-        gpsLocation.latitude  = [[responseArray objectAtIndex:2] doubleValue];
-        //經度
-        gpsLocation.longitude = [[responseArray objectAtIndex:3] doubleValue];
-    }
-    return gpsLocation;
+    [self startLocation];
+    dispatch_queue_t queue = dispatch_queue_create("_reverseLocationFromAddressQueue", NULL);
+    dispatch_async(queue, ^(void) {
+        CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+        [geocoder geocodeAddressString:_address
+                     completionHandler:^(NSArray *placemarks, NSError *error) {
+                         if (error)
+                         {
+                             //NSLog(@"Error: %@", [error debugDescription]);
+                             return;
+                         }
+                         //可解析
+                         CLLocationCoordinate2D _theLocaton;
+                         if (placemarks && placemarks.count > 0)
+                         {
+                             CLPlacemark *_placemark = placemarks[0];
+                             CLLocation *_location   = _placemark.location;
+                             _theLocaton = _location.coordinate;
+                         }
+                         dispatch_async(dispatch_get_main_queue(), ^(void) {
+                             _locationHandler(_theLocaton);
+                         });
+                     }];
+    });
 }
 
 #pragma CLLocationManagerDelegate
@@ -194,9 +212,11 @@
 /*
  * 當使用者離開指定的區域時觸發。
  */
--(void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region{
+-(void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
+{
     //[self _locationHereCorn:manager.location];
-    if( [self.delegate respondsToSelector:@selector(krMapKitLocationManager:didExitRegion:)] ){
+    if( [self.delegate respondsToSelector:@selector(krMapKitLocationManager:didExitRegion:)] )
+    {
         [self.delegate krMapKitLocationManager:manager didExitRegion:region];
     }
     //NSLog(@"2");
@@ -212,9 +232,11 @@
  * @ 當無法取得地理位置資訊時觸發(定位錯誤)
  *   - 停止所有定位
  */
--(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
     //[self _locationHereCorn:manager.location];
-    if( [self.delegate respondsToSelector:@selector(krMapKitLocationManager:didUpdateLocations:)] ){
+    if( [self.delegate respondsToSelector:@selector(krMapKitLocationManager:didUpdateLocations:)] )
+    {
         [self.delegate krMapKitLocationManager:manager didUpdateLocations:locations];
     }
     //NSLog(@"3");
@@ -228,24 +250,28 @@
  *     - 正南方 180 度
  *     - 正西方 270 度
  */
--(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading{
-    if( [self.delegate respondsToSelector:@selector(krMapKitLocationManager:didUpdateHeading:)] ){
+-(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+    if( [self.delegate respondsToSelector:@selector(krMapKitLocationManager:didUpdateHeading:)] )
+    {
         [self.delegate krMapKitLocationManager:manager didUpdateHeading:newHeading];
     }
-//    //取得與「磁北」方向的夾角角度
-//    NSString *magneticHeading = [NSString stringWithFormat:@"%g degrees", newHeading.magneticHeading];
-//    
-//    //取得與「真北」方向的夾角角度
-//    NSString *trueHeading = [NSString stringWithFormat:@"%g degrees", newHeading.trueHeading];
-//    
-//    //取得度量方向的精確度數值 : 正值為真實方向與磁北方向的誤差值，負值為方向不準確
-//    NSString *missDegrees = [NSString stringWithFormat:@"%g degrees", newHeading.headingAccuracy];
-//    
-//    NSLog(@"與真北的角度 : %@ \n 與磁北的角度 : %@ \n 與磁北的誤差角度為 : %@ \n", magneticHeading, trueHeading, missDegrees);
-//    
-//    double locationSpeed = manager.location.speed;
-//    NSLog(@"目前行進方向的瞬時速度 : %lf \n", locationSpeed);
-    
+    /*
+     * @ 取得與「磁北」方向的夾角角度
+     */
+    //NSString *magneticHeading = [NSString stringWithFormat:@"%g degrees", newHeading.magneticHeading];
+    /*
+     * @ 取得與「真北」方向的夾角角度
+     */
+    //NSString *trueHeading = [NSString stringWithFormat:@"%g degrees", newHeading.trueHeading];
+    /*
+     * @ 取得度量方向的精確度數值
+     *   - 正值為真實方向與磁北方向的誤差值，負值為方向不準確
+     */
+    //NSString *missDegrees = [NSString stringWithFormat:@"%g degrees", newHeading.headingAccuracy];
+    //double locationSpeed = manager.location.speed;
+    //NSLog(@"目前行進方向的瞬時速度 : %lf \n", locationSpeed);
+    //NSLog(@"與真北的角度 : %@ \n 與磁北的角度 : %@ \n 與磁北的誤差角度為 : %@ \n", magneticHeading, trueHeading, missDegrees);
     //NSLog(@"4");
 }
 

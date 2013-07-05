@@ -14,7 +14,8 @@
 
 @class SelfMKAnnotationProtocol;
 
-@interface ViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate>{
+@interface ViewController : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate>
+{
     //GPS 管理器
     CLLocationManager *locationManager;
     //載入地圖時的特效動畫 View
