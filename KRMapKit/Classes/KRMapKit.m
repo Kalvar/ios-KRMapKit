@@ -81,9 +81,6 @@
                                NSLog(@"%@ : %@", _key, [_placemark.addressDictionary objectForKey:_key]);
                            }
                             */
-                           /*
-                            * 只跑一次 ( 因為當前的 i98 版本為取單一值的地址，之後如果有取多個定位點的地址時，再設計成能跑多次的版本 )
-                            */
                            break;
                        }
                        if( [self.delegate respondsToSelector:@selector(krMapKit:didReverseGeocodeLocation:)] ){
